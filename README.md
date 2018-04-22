@@ -1,2 +1,1 @@
-# SpringMVC
-spring mvc
+this repository contains spring MVC projects and code.
