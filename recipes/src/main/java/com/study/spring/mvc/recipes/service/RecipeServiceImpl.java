@@ -1,6 +1,7 @@
 package com.study.spring.mvc.recipes.service;
 
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 import org.springframework.stereotype.Service;
@@ -25,4 +26,17 @@ public class RecipeServiceImpl implements RecipeService
 		
 		return recipes;
 	}
+	@Override
+	public Recipe findById(Long id)
+	{
+		Recipe aRecipe = null;
+		Optional<Recipe> recipe = recRep.findById(id);
+		
+		if(recipe.isPresent())
+		{
+			aRecipe = recipe.get();
+		}
+		return aRecipe;
+	}
+	
 }

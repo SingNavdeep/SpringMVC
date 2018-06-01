@@ -7,4 +7,5 @@ import com.study.spring.mvc.recipes.domain.Recipe;
 public interface RecipeService
 {
 	Set<Recipe> getRecipes();
+	public Recipe findById(Long id);
 }

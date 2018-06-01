@@ -31,5 +31,4 @@ public class UnitOfMeasureRepositoryIT extends TestCase
 		
 		assertEquals("Teaspoon", uom.get().getDescription());
 	}
-
 }

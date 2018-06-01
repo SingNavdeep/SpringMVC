@@ -1,10 +1,11 @@
 package com.study.spring.mvc.recipes.service;
 
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.times;
 
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 import junit.framework.TestCase;
@@ -48,5 +49,30 @@ public class RecipeServiceImplTest extends TestCase
 		assertEquals(mockRecipes.size(), 1);
 		
 		verify(recipeRepo, times(1)).findAll();
+	}
+	
+	@Test
+	public void testFindByID()
+	{
+		Long recipeId = 1L;
+		
+		/**
+		 * BDD paradigms(given, when, then)
+		 */
+		//given
+		Recipe aRec = new Recipe();
+		aRec.setId(recipeId);		
+		//when then return
+		when(recipeRepo.findById(recipeId)).thenReturn(Optional.of(aRec));
+		Recipe returnedRecipe = recipeSer.findById(1L);
+		
+		/**
+		 * verifications using Mockito and Junit paradigms
+		 */
+		//verify that recipeRepo.findById called only once.
+		verify(recipeRepo, times(1)).findById(recipeId);
+		
+		//the two recipes must essentially be the same reference
+		assertEquals(aRec, returnedRecipe);
 	}
 }
