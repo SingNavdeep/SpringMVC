@@ -7,7 +7,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 import junit.framework.TestCase;
@@ -20,13 +19,15 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.ui.Model;
 
 import com.study.spring.mvc.recipes.command.RecipeCommand;
+import com.study.spring.mvc.recipes.controllers.ControllerExceptionHandler;
 import com.study.spring.mvc.recipes.controllers.RecipeController;
 import com.study.spring.mvc.recipes.domain.Recipe;
 import com.study.spring.mvc.recipes.excpetions.NotFoundException;
 import com.study.spring.mvc.recipes.service.RecipeService;
 
 /**
- * a test case for testing the spring MVC controller named RecipeController with Mockito and spring's MockMvc frameworks.
+ * a test case for testing the spring MVC controller named RecipeController 
+ * with Mockito and spring's MockMvc frameworks.
  * @author Navdeep
  *
  */
@@ -39,11 +40,15 @@ public class RecipeControllerTest extends TestCase
 	private Model model;
 	
 	private RecipeController recCont;
+	private MockMvc mockMvc;
 	
 	public void setUp()
 	{
 		MockitoAnnotations.initMocks(this);
 		recCont = new RecipeController(recSer);
+		
+		mockMvc = MockMvcBuilders.standaloneSetup(recCont)
+				.setControllerAdvice(new ControllerExceptionHandler()).build();
 	}
 	
 	@Test
@@ -63,7 +68,7 @@ public class RecipeControllerTest extends TestCase
 		
 		//spring's Mock MVC to perform HTTP get requests on the controller
 		//and verify the results.
-		MockMvc mockMvc = MockMvcBuilders.standaloneSetup(recCont).build();
+		
 		mockMvc.perform(get("/recipe/show/1"))
         .andExpect(status().isOk())
         .andExpect(view().name("recipe/show"));
@@ -72,7 +77,6 @@ public class RecipeControllerTest extends TestCase
 	@Test
 	public void testNewRecipe() throws Exception 
 	{
-		MockMvc mockMvc = MockMvcBuilders.standaloneSetup(recCont).build();
 		mockMvc.perform(get("/recipe/new")).andExpect(status().isOk()).andExpect(view().name("recipe/recipeform"));
 	}
 	
@@ -85,7 +89,6 @@ public class RecipeControllerTest extends TestCase
 		
 		//when
 		when(recSer.saveRecipeCommand(any())).thenReturn(command);
-		MockMvc mockMvc = MockMvcBuilders.standaloneSetup(recCont).build();
 		mockMvc.perform(post("/recipe")).andExpect(status().is3xxRedirection()).andExpect(view().name("redirect:/recipe/show/2"));
 	}
 	
@@ -94,7 +97,6 @@ public class RecipeControllerTest extends TestCase
 	{
 		when(recSer.findById(anyLong())).thenThrow(NotFoundException.class);
 
-		MockMvc mockMvc = MockMvcBuilders.standaloneSetup(recCont).build();
         mockMvc.perform(get("/recipe/show/1"))
                 .andExpect(status().isNotFound()).andExpect(view().name("NotFound"));
 	}
@@ -106,7 +108,6 @@ public class RecipeControllerTest extends TestCase
 	@Test
 	public void testNotANumber() throws Exception
 	{
-		MockMvc mockMvc = MockMvcBuilders.standaloneSetup(recCont).build();
         mockMvc.perform(get("/recipe/show/qwe"))
                 .andExpect(status().isBadRequest()).andExpect(view().name("BadRequest"));
 	}

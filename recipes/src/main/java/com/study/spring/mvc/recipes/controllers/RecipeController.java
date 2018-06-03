@@ -83,7 +83,7 @@ public class RecipeController
 	}
 	
 	/**
-	 * Exception handler for this controller.
+	 * Exception handler for handling recipe not found error.
 	 * when a notfoundexception is thrown, this method will be called and will return a view/HTML page
 	 * which will be displayed to the client.
 	 * @return
@@ -101,6 +101,11 @@ public class RecipeController
         return modelAndView;
 	}
 	
+	/**
+	 * Exception handler for number format exception
+	 * @param exp, 
+	 * @return
+	 *//*
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
 	@ExceptionHandler(NumberFormatException.class)
 	public ModelAndView handleNumFormat(Exception exp)
@@ -111,5 +116,6 @@ public class RecipeController
         modelAndView.setViewName("BadRequest");
         
         return modelAndView;
-	}
+	}*/
+	//===method moved to ControllerExceptionHandler as a common handler to all controllers===
 }
