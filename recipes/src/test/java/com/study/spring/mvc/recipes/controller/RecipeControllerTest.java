@@ -1,9 +1,10 @@
 package com.study.spring.mvc.recipes.controller;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.any;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -20,8 +21,14 @@ import org.springframework.ui.Model;
 import com.study.spring.mvc.recipes.command.RecipeCommand;
 import com.study.spring.mvc.recipes.controllers.RecipeController;
 import com.study.spring.mvc.recipes.domain.Recipe;
+import com.study.spring.mvc.recipes.excpetions.NotFoundException;
 import com.study.spring.mvc.recipes.service.RecipeService;
 
+/**
+ * a test case for testing the spring MVC controller named RecipeController with Mockito and spring's MockMvc frameworks.
+ * @author Navdeep
+ *
+ */
 public class RecipeControllerTest extends TestCase
 {
 	@Mock
@@ -65,7 +72,7 @@ public class RecipeControllerTest extends TestCase
 	public void testNewRecipe() throws Exception 
 	{
 		MockMvc mockMvc = MockMvcBuilders.standaloneSetup(recCont).build();
-		mockMvc.perform(get("recipe/new")).andExpect(status().isOk()).andExpect(view().name("recipe/recipeform"));
+		mockMvc.perform(get("/recipe/new")).andExpect(status().isOk()).andExpect(view().name("recipe/recipeform"));
 	}
 	
 	@Test
@@ -78,6 +85,16 @@ public class RecipeControllerTest extends TestCase
 		//when
 		when(recSer.saveRecipeCommand(any())).thenReturn(command);
 		MockMvc mockMvc = MockMvcBuilders.standaloneSetup(recCont).build();
-		mockMvc.perform(post("recipe")).andExpect(status().is3xxRedirection()).andExpect(view().name("redirect:/recipe/show/2"));
+		mockMvc.perform(post("/recipe")).andExpect(status().is3xxRedirection()).andExpect(view().name("redirect:/recipe/show/2"));
+	}
+	
+	@Test
+	public void testRecipeNotFound() throws Exception
+	{
+		when(recSer.findById(anyLong())).thenThrow(NotFoundException.class);
+
+		MockMvc mockMvc = MockMvcBuilders.standaloneSetup(recCont).build();
+        mockMvc.perform(get("/recipe/show/1"))
+                .andExpect(status().isNotFound());
 	}
 }

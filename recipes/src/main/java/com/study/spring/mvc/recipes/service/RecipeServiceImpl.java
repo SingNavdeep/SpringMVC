@@ -11,10 +11,12 @@ import com.study.spring.mvc.recipes.command.RecipeCommand;
 import com.study.spring.mvc.recipes.converters.RecipeCommandToRecipe;
 import com.study.spring.mvc.recipes.converters.RecipeToRecipeCommand;
 import com.study.spring.mvc.recipes.domain.Recipe;
+import com.study.spring.mvc.recipes.excpetions.NotFoundException;
 import com.study.spring.mvc.recipes.repositories.RecipeRepository;
 
 @Service
-public class RecipeServiceImpl implements RecipeService {
+public class RecipeServiceImpl implements RecipeService
+{
 	private final RecipeRepository recRep;
 	private final RecipeCommandToRecipe recipeCommandToRecipe;
 	private final RecipeToRecipeCommand recipeToRecipeCommand;
@@ -35,13 +37,22 @@ public class RecipeServiceImpl implements RecipeService {
 		return recipes;
 	}
 
+	/**
+	 * find a recipe by id.
+	 * Throws runtime exception if recipe not found
+	 */
 	@Override
 	public Recipe findById(Long id) {
 		Recipe aRecipe = null;
 		Optional<Recipe> recipe = recRep.findById(id);
 
-		if (recipe.isPresent()) {
+		if (recipe.isPresent())
+		{
 			aRecipe = recipe.get();
+		}
+		else
+		{
+			throw new NotFoundException("Recipe not found.");
 		}
 		return aRecipe;
 	}

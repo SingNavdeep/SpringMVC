@@ -1,9 +1,9 @@
 package com.study.spring.mvc.recipes.service;
 
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.anyLong;
 
 import java.util.HashSet;
 import java.util.Optional;
@@ -19,6 +19,7 @@ import org.mockito.MockitoAnnotations;
 import com.study.spring.mvc.recipes.converters.RecipeCommandToRecipe;
 import com.study.spring.mvc.recipes.converters.RecipeToRecipeCommand;
 import com.study.spring.mvc.recipes.domain.Recipe;
+import com.study.spring.mvc.recipes.excpetions.NotFoundException;
 import com.study.spring.mvc.recipes.repositories.RecipeRepository;
 
 /**
@@ -91,4 +92,24 @@ public class RecipeServiceImplTest extends TestCase
 		recipeSer.deleteRecipe(2L);
 		verify(recipeRepo, times(1)).deleteById(anyLong());
 	}
+	
+	//TODO check why expected is not working
+	@Test(expected = NotFoundException.class)
+    public void testRecipeNotFound()
+	{
+        Optional<Recipe> recipeOptional = Optional.empty();
+
+        when(recipeRepo.findById(anyLong())).thenReturn(recipeOptional);
+        
+        try
+        {
+        	Recipe recipeReturned = recipeSer.findById(1L);
+        	fail("Expected rutime exception to be thrown");
+        }
+        catch(NotFoundException nfe)
+        {
+        	
+        }
+
+    }
 }
