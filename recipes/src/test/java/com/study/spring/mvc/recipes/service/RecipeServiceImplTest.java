@@ -3,6 +3,7 @@ package com.study.spring.mvc.recipes.service;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.anyLong;
 
 import java.util.HashSet;
 import java.util.Optional;
@@ -15,6 +16,8 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import com.study.spring.mvc.recipes.converters.RecipeCommandToRecipe;
+import com.study.spring.mvc.recipes.converters.RecipeToRecipeCommand;
 import com.study.spring.mvc.recipes.domain.Recipe;
 import com.study.spring.mvc.recipes.repositories.RecipeRepository;
 
@@ -30,11 +33,17 @@ public class RecipeServiceImplTest extends TestCase
 	@Mock
 	private RecipeRepository recipeRepo;
 	
+	@Mock
+    RecipeToRecipeCommand recipeToRecipeCommand;
+
+    @Mock
+    RecipeCommandToRecipe recipeCommandToRecipe;
+	
 	@Before
 	public void setUp()
 	{
 		MockitoAnnotations.initMocks(this);
-		recipeSer = new RecipeServiceImpl(recipeRepo);
+		recipeSer = new RecipeServiceImpl(recipeRepo, recipeCommandToRecipe, recipeToRecipeCommand);
 	}
 	
 	@Test
@@ -74,5 +83,12 @@ public class RecipeServiceImplTest extends TestCase
 		
 		//the two recipes must essentially be the same reference
 		assertEquals(aRec, returnedRecipe);
+	}
+	
+	@Test
+	public void testDeleteRecipe()
+	{
+		recipeSer.deleteRecipe(2L);
+		verify(recipeRepo, times(1)).deleteById(anyLong());
 	}
 }
