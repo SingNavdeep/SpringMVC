@@ -95,6 +95,6 @@ public class RecipeControllerTest extends TestCase
 
 		MockMvc mockMvc = MockMvcBuilders.standaloneSetup(recCont).build();
         mockMvc.perform(get("/recipe/show/1"))
-                .andExpect(status().isNotFound());
+                .andExpect(status().isNotFound());//.andExpect(view().name("NotFound"));
 	}
 }

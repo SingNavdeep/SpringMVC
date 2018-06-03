@@ -1,13 +1,18 @@
 package com.study.spring.mvc.recipes.controllers;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.servlet.ModelAndView;
 
 import com.study.spring.mvc.recipes.command.RecipeCommand;
+import com.study.spring.mvc.recipes.excpetions.NotFoundException;
 import com.study.spring.mvc.recipes.service.RecipeService;
 
 @Controller
@@ -30,6 +35,7 @@ public class RecipeController
 		
 		return "recipe/show";
 	}
+	
 	
 	@RequestMapping("recipe/new")
 	public String newRecipe(Model model)
@@ -66,5 +72,23 @@ public class RecipeController
 	{
 		recSer.deleteRecipe(new Long(id));
 		return "redirect:/";
+	}
+	
+	/**
+	 * Exception handler for this controller.
+	 * when a notfoundexception is thrown, this method will be called and will return a view/HTML page
+	 * which will be displayed to the client.
+	 * @return
+	 */
+	@ResponseStatus(HttpStatus.NOT_FOUND)
+	@ExceptionHandler(NotFoundException.class)
+    public ModelAndView handleNotFound()
+	{
+        //log.error("Handling not found exception");
+
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("NotFound");
+
+        return modelAndView;
 	}
 }
