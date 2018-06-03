@@ -13,6 +13,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.study.spring.mvc.recipes.command.RecipeCommand;
 import com.study.spring.mvc.recipes.excpetions.NotFoundException;
+//import com.study.spring.mvc.recipes.excpetions.NumberFormatException;
 import com.study.spring.mvc.recipes.service.RecipeService;
 
 @Controller
@@ -26,10 +27,17 @@ public class RecipeController
 		this.recSer = rSer;
 	}
 	
+	/**
+	 * Get a recipe from recipe ID
+	 * @param id
+	 * @param model
+	 * @return
+	 * @throws NumberFormatException, when id is not parseable as a number
+	 */
 	@RequestMapping("/recipe/show/{id}")
 	//Variable in URL is extracted via @PathVariable.
 	//the variable name in request mapping and path variable should match
-	public String getRecipeByID(@PathVariable String id, Model model)
+	public String getRecipeByID(@PathVariable String id, Model model)// throws NumberFormatException
 	{
 		model.addAttribute("recipe", recSer.findById(new Long(id)));
 		
@@ -85,12 +93,23 @@ public class RecipeController
     public ModelAndView handleNotFound(Exception exp)
 	{
         //log.error("Handling not found exception");
-
         ModelAndView modelAndView = new ModelAndView();
         
         modelAndView.addObject("exception", exp);
         modelAndView.setViewName("NotFound");
 
+        return modelAndView;
+	}
+	
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	@ExceptionHandler(NumberFormatException.class)
+	public ModelAndView handleNumFormat(Exception exp)
+	{
+		ModelAndView modelAndView = new ModelAndView();
+        
+        modelAndView.addObject("exception", exp);
+        modelAndView.setViewName("BadRequest");
+        
         return modelAndView;
 	}
 }

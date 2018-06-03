@@ -7,6 +7,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 import junit.framework.TestCase;
@@ -95,6 +96,18 @@ public class RecipeControllerTest extends TestCase
 
 		MockMvc mockMvc = MockMvcBuilders.standaloneSetup(recCont).build();
         mockMvc.perform(get("/recipe/show/1"))
-                .andExpect(status().isNotFound());//.andExpect(view().name("NotFound"));
+                .andExpect(status().isNotFound()).andExpect(view().name("NotFound"));
+	}
+	
+	/**
+	 * Method to test Recipe controller's getRecipeByID when ID passed as URL path var is not a number
+	 * @throws Exception
+	 */
+	@Test
+	public void testNotANumber() throws Exception
+	{
+		MockMvc mockMvc = MockMvcBuilders.standaloneSetup(recCont).build();
+        mockMvc.perform(get("/recipe/show/qwe"))
+                .andExpect(status().isBadRequest()).andExpect(view().name("BadRequest"));
 	}
 }
