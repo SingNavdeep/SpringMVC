@@ -52,7 +52,7 @@ public class RecipeServiceImpl implements RecipeService
 		}
 		else
 		{
-			throw new NotFoundException("Recipe not found.");
+			throw new NotFoundException("Recipe not found: " + id);
 		}
 		return aRecipe;
 	}
