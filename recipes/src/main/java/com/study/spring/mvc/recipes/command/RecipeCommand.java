@@ -117,8 +117,4 @@ public class RecipeCommand
 	public void setCategories(Set<CategoryCommand> categories) {
 		this.categories = categories;
 	}
-    
-    
-    
-    
 }
