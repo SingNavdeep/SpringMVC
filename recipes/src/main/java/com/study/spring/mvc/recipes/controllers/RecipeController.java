@@ -68,6 +68,7 @@ public class RecipeController
 	@RequestMapping(value = "recipe", method = RequestMethod.POST)
 	//Form data is posted to RecipeCommand via ModelAttribute annotation
 	//RecipeCommand variable names and form names should match
+	//@Valid is used to invoke the validation framework on the object (in this case recipe command) after it is populated from the form.
 	/**
 	 * Save(a new) or update a recipe
 	 * @param command, the recipe command object containing form values 
@@ -107,7 +108,7 @@ public class RecipeController
 		return "recipe/recipeform";
 	}
 	
-	//TODO: check wher request method delete is not working
+	//TODO: check why request method delete is not working
 	@RequestMapping(value = "recipe/delete/{id}", method = RequestMethod.GET)
 	public String deleteRecipe(@PathVariable String id, Model model)
 	{

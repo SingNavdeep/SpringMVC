@@ -8,6 +8,7 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.NotBlank;
+import org.hibernate.validator.constraints.URL;
 
 import com.study.spring.mvc.recipes.domain.Difficulty;
 
@@ -31,10 +32,13 @@ public class RecipeCommand
     @Max(100)
     private Integer servings;
     private String source;
+    
+    @URL
     private String url;
     
     @NotBlank
     private String directions;
+    
     private Set<IngredientCommand> ingredients = new HashSet<>();
     private Difficulty difficulty;
     private NotesCommand notes;
