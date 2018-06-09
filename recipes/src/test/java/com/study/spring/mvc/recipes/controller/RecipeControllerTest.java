@@ -9,11 +9,13 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 import junit.framework.TestCase;
 
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.ui.Model;
@@ -89,7 +91,15 @@ public class RecipeControllerTest extends TestCase
 		
 		//when
 		when(recSer.saveRecipeCommand(any())).thenReturn(command);
-		mockMvc.perform(post("/recipe")).andExpect(status().is3xxRedirection()).andExpect(view().name("redirect:/recipe/show/2"));
+		
+		mockMvc.perform(post("/recipe")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .param("id", "")
+                .param("description", "some string")
+                .param("directions", "some directions")
+        )
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/recipe/show/2"));
 	}
 	
 	@Test
@@ -100,7 +110,7 @@ public class RecipeControllerTest extends TestCase
         mockMvc.perform(get("/recipe/show/1"))
                 .andExpect(status().isNotFound()).andExpect(view().name("NotFound"));
 	}
-	
+
 	/**
 	 * Method to test Recipe controller's getRecipeByID when ID passed as URL path var is not a number
 	 * @throws Exception
@@ -111,4 +121,26 @@ public class RecipeControllerTest extends TestCase
         mockMvc.perform(get("/recipe/show/qwe"))
                 .andExpect(status().isBadRequest()).andExpect(view().name("BadRequest"));
 	}
+	
+	
+
+	
+	/**
+	 * test the updateRecipe method when recipe command object has validation errors
+	 * @throws Exception
+	 */
+	@Test
+    public void testUpdateRecipeFormValidationFail() throws Exception {
+        RecipeCommand command = new RecipeCommand();
+        command.setId(2L);
+
+        when(recSer.saveRecipeCommand(any())).thenReturn(command);
+
+        mockMvc.perform(post("/recipe")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .param("id", ""))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("recipe"))
+                .andExpect(view().name("recipe/recipeform"));
+    }
 }

@@ -1,8 +1,11 @@
 package com.study.spring.mvc.recipes.controllers;
 
+import javax.validation.Valid;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -46,6 +49,14 @@ public class RecipeController
 	
 	
 	@RequestMapping("recipe/new")
+	/**
+	 * Display recipe form to add a new recipe.
+	 * Note that the command object is bound to model so that when the form is submitted,
+	 * form values get stored in recipe command object. 
+	 * When updateRecipe method (below) is called, the recipe command object is received as a parameter.
+	 * @param model
+	 * @return
+	 */
 	public String newRecipe(Model model)
 	{
 		model.addAttribute("recipe", new RecipeCommand());
@@ -57,8 +68,23 @@ public class RecipeController
 	@RequestMapping(value = "recipe", method = RequestMethod.POST)
 	//Form data is posted to RecipeCommand via ModelAttribute annotation
 	//RecipeCommand variable names and form names should match
-	public String updateRecipe(@ModelAttribute RecipeCommand command)
+	/**
+	 * Save(a new) or update a recipe
+	 * @param command, the recipe command object containing form values 
+	 * @return
+	 */
+	public String updateRecipe(@Valid @ModelAttribute("recipe") RecipeCommand command, BindingResult bindingResult)
 	{
+		//check for validation errors in command object 
+		//and return to recipeform page
+		if(bindingResult.hasErrors())
+		{
+            bindingResult.getAllErrors().forEach(objectError -> {
+                System.out.println("Command error: " + objectError.toString());
+            });
+
+            return "recipe/recipeform";
+        }
 		RecipeCommand recComm = recSer.saveRecipeCommand(command);
 		
 		//redirect to display recipe page
@@ -67,6 +93,13 @@ public class RecipeController
 	
 	@RequestMapping(value = "recipe/update/{id}", method = RequestMethod.GET)
 	//RecipeCommand object will send data from controller to html page
+	/**
+	 * Get recipe command object for update.
+	 * The command object is bound to the model so that recipe properties can be displayed in recipe form.
+	 * @param id
+	 * @param model
+	 * @return
+	 */
 	public String getRecipeForUpdate(@PathVariable String id, Model model)
 	{
 		model.addAttribute("recipe", recSer.findRecipeCommandById(new Long(id)));
